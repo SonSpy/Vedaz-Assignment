@@ -94,6 +94,15 @@ const App = () => {
   const [badgeCount, setBadgeCount] = useState(0);
   const navRef = useRef();
 
+  // Log FCM token on app start
+  useEffect(() => {
+    messaging()
+      .getToken()
+      .then(token => {
+        console.log('FCM Token:', token);
+      });
+  }, []);
+
   // Load notifications from storage
   useEffect(() => {
     AsyncStorage.getItem('notifications').then(data => {
@@ -121,16 +130,14 @@ const App = () => {
         }
       } else {
         // Fallback for older Android/iOS
-        messaging()
-          .requestPermission()
-          .then(authStatus => {
-            const enabled =
-              authStatus === AuthorizationStatus.AUTHORIZED ||
-              authStatus === AuthorizationStatus.PROVISIONAL;
-            if (!enabled) {
-              Alert.alert('Permission Required', 'Please enable notifications in system settings.');
-            }
-          });
+        requestPermission().then(authStatus => {
+          const enabled =
+            authStatus === AuthorizationStatus.AUTHORIZED ||
+            authStatus === AuthorizationStatus.PROVISIONAL;
+          if (!enabled) {
+            Alert.alert('Permission Required', 'Please enable notifications in system settings.');
+          }
+        });
       }
     }
     requestNotificationPermission();
@@ -217,33 +224,31 @@ const App = () => {
     });
 
     // App launched from quit state by notification
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          const { title, body } = remoteMessage.notification || {};
-          const newNoti = {
-            title,
-            body,
-            timestamp: Date.now(),
-          };
-          setNotifications(prev => {
-            const updated = [newNoti, ...prev];
-            AsyncStorage.setItem('notifications', JSON.stringify(updated));
-            return updated;
-          });
-          setBadgeCount(prev => {
-            const newCount = prev + 1;
-            PushNotification.setApplicationIconBadgeNumber(newCount);
-            return newCount;
-          });
-          setTimeout(() => {
-            if (navRef.current) {
-              navRef.current.navigate('Details', { notification: newNoti });
-            }
-          }, 500);
-        }
-      });
+    messaging().getInitialNotification().then(remoteMessage => {
+      if (remoteMessage) {
+        const { title, body } = remoteMessage.notification || {};
+        const newNoti = {
+          title,
+          body,
+          timestamp: Date.now(),
+        };
+        setNotifications(prev => {
+          const updated = [newNoti, ...prev];
+          AsyncStorage.setItem('notifications', JSON.stringify(updated));
+          return updated;
+        });
+        setBadgeCount(prev => {
+          const newCount = prev + 1;
+          PushNotification.setApplicationIconBadgeNumber(newCount);
+          return newCount;
+        });
+        setTimeout(() => {
+          if (navRef.current) {
+            navRef.current.navigate('Details', { notification: newNoti });
+          }
+        }, 500);
+      }
+    });
 
     return () => {
       unsubscribe();
@@ -251,9 +256,9 @@ const App = () => {
     };
   }, []);
 
-  // Clear badge when app is opened
+  // Clear all notifications and reset badge count when app opens
   useEffect(() => {
-    setBadgeCount(0);
+    PushNotification.cancelAllLocalNotifications();
     PushNotification.setApplicationIconBadgeNumber(0);
   }, []);
 
