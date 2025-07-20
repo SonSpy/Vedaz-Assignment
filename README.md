@@ -1,97 +1,118 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# WhatsAppClone – React Native Push Notification Assignment
 
-# Getting Started
+## 📱 Overview
+This is a sample React Native app built for an internship assignment. It demonstrates real-time push notifications (like WhatsApp) with support for Android 13+ (including Android 15), featuring:
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+- Foreground, background, and killed-state notifications
+- Native Android notification handling (Java)
+- Deep linking (open a specific screen from notification)
+- Local notification storage (history)
+- Badge count (in-app and on supported launchers)
 
-## Step 1: Start Metro
+---
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 🚀 Features
+- **Minimal WhatsApp-like UI**
+- **Push Notifications**: Foreground (in-app alert), background, and killed state (system notification)
+- **Native Java Module**: Custom `NotificationService` for Android notification handling
+- **Deep Linking**: Tap a notification to open a details screen
+- **Notification History**: All received notifications are stored and viewable in-app
+- **Badge Count**: Shows unread notification count in-app and on supported Android launchers
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+---
 
+## 🛠️ Setup Instructions
+
+### 1. **Clone the Repository**
 ```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+git clone <your-repo-url>
+cd WhatsAppClone
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
+### 2. **Install Dependencies**
 ```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+npm install
 ```
 
-### iOS
+### 3. **Firebase Setup**
+- Go to [Firebase Console](https://console.firebase.google.com/)
+- Create a new project
+- Register your Android app (use the package name from `android/app/src/main/AndroidManifest.xml`)
+- Download `google-services.json` and place it in `android/app/`
+- In Firebase Console, enable Cloud Messaging
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+### 4. **Android Permissions**
+- The app requests notification permission on Android 13+ at runtime
+- Required permissions are set in `AndroidManifest.xml` (`INTERNET`, `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK`)
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### 5. **Native Modules**
+- Custom Java service (`NotificationService.java`) handles notifications in all app states
+- Deep linking and badge count are supported
 
-```sh
-bundle install
-```
+---
 
-Then, and every time you update your native dependencies, run:
+## ▶️ Running the App (Android)
 
-```sh
-bundle exec pod install
-```
+1. **Start an Android emulator (Google Play image) or connect a physical device**
+2. **Build and run the app:**
+   ```sh
+   npx react-native run-android
+   ```
+3. **Grant notification permission** when prompted (Android 13+)
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+---
 
-```sh
-# Using npm
-npm run ios
+## 🔔 Testing Push Notifications
 
-# OR using Yarn
-yarn ios
-```
+1. **Get your device's FCM token** (printed in Metro logs)
+2. **Send a test notification from Firebase Console:**
+   - Go to Cloud Messaging > Send test message
+   - Paste your FCM token
+   - Enter a title and body
+   - Send
+3. **Test in all app states:**
+   - **Foreground:** In-app alert appears
+   - **Background:** System notification appears
+   - **Killed:** System notification appears (heads-up if possible)
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## 🔗 Deep Linking & Notification History
+- Tapping a notification (from system tray or in-app) opens a details screen with the notification content
+- All received notifications are stored and viewable in the app's notification history
 
-## Step 3: Modify your app
+---
 
-Now that you have successfully run the app, let's make changes!
+## 🔢 Badge Count
+- Badge count is shown in-app and on the app icon (if supported by your launcher)
+- **Note:** Most Android launchers only show a dot, not a number. This is a system limitation.
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+---
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## ⚠️ Notes & Troubleshooting
+- **Emulator:** Use a Google Play image and sign in to Google for FCM to work in killed state
+- **Heads-up notifications:** Not guaranteed in killed state (Android system policy)
+- **Permissions:** Notifications are blocked by default on Android 13+ until user grants permission
+- **If notifications don't appear:**
+  - Check notification permission in system settings
+  - Uninstall/reinstall the app to reset notification channels
+  - Check Firebase setup and `google-services.json` placement
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+---
 
-## Congratulations! :tada:
+## 🎥 Demo Video Submission
+- Record a video showing:
+  - App receiving notifications in all states
+  - Deep linking (notification tap opens details)
+  - Notification history and badge count
+- Upload to the provided Google Drive link, named with your full name
 
-You've successfully run and modified your React Native App. :partying_face:
+---
 
-### Now what?
+## 👤 Credits
+- Assignment by [Your Name]
+- Built for [Company/Internship Name] React Native App Development Internship
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+---
 
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+**Feel free to reach out if you have any questions or issues!**
